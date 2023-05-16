@@ -1,6 +1,6 @@
 {
   "name": "@mshick/fast-envsubst",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A GitHub Action which mimics envsubst.",
   "main": "index.js",
   "scripts": {
@@ -30,8 +30,8 @@
   "homepage": "https://github.com/mshick/fast-envsubst#readme",
   "dependencies": {
     "@actions/core": "^1.10.0",
-    "dotenv": "^8.2.0",
-    "envsub": "^4.0.7"
+    "dotenv": "^16.0.3",
+    "envsub": "^4.1.0"
   },
   "devDependencies": {
     "@types/jest": "^25.2.1",
