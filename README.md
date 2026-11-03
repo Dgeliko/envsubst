@@ -1,8 +1,7 @@
 # Fast Envsubst
 
-> A GitHub Action which is a light wrapper around the
-> [envsub](https://github.com/danday74/envsub) package, providing a GitHub
-> Actions native runtime (Node.js) for envsubst-like activities.
+> A lightweight GitHub Action for environment variable substitution,
+> running directly in the GitHub Actions Node.js runtime.
 
 ## Usage
 
@@ -59,3 +58,25 @@ npm run build
 ```
 
 Commit the generated `dist` directory together with source changes.
+
+## Experimental substitution engine
+
+The `experimental` branch replaces `envsub` with a single-pass substitution
+engine and removes its dependency tree. To try it, use
+`Dgeliko/envsubst@experimental`.
+
+- `${NAME}` uses the environment value, or an empty string if it is missing.
+- `${NAME:-default}` uses the default only when the variable is missing.
+  An existing empty value stays empty, matching the previous Action behavior.
+- Variable names use letters, digits and underscores and cannot start with a digit.
+  Spaces around names are accepted, for example `${ NAME }`.
+- `$NAME` without braces is left unchanged.
+- Values are inserted literally, including dollar signs and backslashes.
+  Inserted placeholders are not expanded again. This deliberately fixes the old
+  engine's handling of replacement tokens and accidental repeated expansion.
+- Existing environment variables take precedence over values from `env-file`.
+- Both `in-file` and `out-file` are required. `out-file: stdout` writes the
+  substituted template to standard output instead of a file.
+
+The `out-file-created` output is the string `true` on successful substitution
+(including stdout), and `false` on failure; failures also fail the Action.

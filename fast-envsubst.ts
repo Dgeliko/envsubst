@@ -1,12 +1,13 @@
 import * as core from '@actions/core'
 import * as path from 'path'
 import * as dotenv from 'dotenv'
-import envsub from 'envsub'
+import {readFile, writeFile} from 'node:fs/promises'
+import {substitute} from './substitute'
 
 const run = async (): Promise<void> => {
   try {
-    const inFile = core.getInput('in-file')
-    const outFile = core.getInput('out-file')
+    const inFile = core.getInput('in-file', {required: true})
+    const outFile = core.getInput('out-file', {required: true})
     const envFile = core.getInput('env-file')
 
     core.debug(`in file: ${inFile}`)
@@ -18,10 +19,15 @@ const run = async (): Promise<void> => {
       if (result.error) throw result.error
     }
 
-    await envsub({
-      outputFile: outFile,
-      templateFile: inFile,
-    })
+    const template = await readFile(inFile, 'utf8')
+    const result = substitute(template)
+    if (outFile === 'stdout') {
+      await new Promise<void>((resolve, reject) => {
+        process.stdout.write(result, (error) => error ? reject(error) : resolve())
+      })
+    } else {
+      await writeFile(outFile, result, 'utf8')
+    }
 
     core.setOutput('out-file-created', 'true')
   } catch (error) {

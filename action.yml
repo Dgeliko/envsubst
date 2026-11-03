@@ -10,6 +10,9 @@ inputs:
   env-file:
     description: "provide an env file, loaded with dotenv"
     required: false
+outputs:
+  out-file-created:
+    description: "true when substitution succeeds; false on failure"
 branding:
   icon: dollar-sign
   color: purple
