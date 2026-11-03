@@ -45,3 +45,18 @@ describe('fast-envsubst action', () => {
     expect(outFileFixture.toString()).toEqual(outFileResult.toString())
   })
 })
+
+describe('failure reporting', () => {
+  it('reports a missing env file without generating output', async () => {
+    jest.spyOn(core, 'getInput').mockImplementation((name: string) =>
+      name === 'env-file' ? '__tests__/fixtures/missing.env' : '',
+    )
+    const failed = jest.spyOn(core, 'setFailed').mockImplementation(() => {})
+    const output = jest.spyOn(core, 'setOutput').mockImplementation(() => {})
+    await run()
+    expect(failed).toHaveBeenCalledWith(expect.stringContaining('ENOENT'))
+    expect(output).toHaveBeenCalledWith('out-file-created', 'false')
+    failed.mockRestore()
+    output.mockRestore()
+  })
+})

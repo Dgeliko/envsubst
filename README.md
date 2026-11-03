@@ -7,7 +7,7 @@
 ## Usage
 
 ```yaml
-- uses: mshick/fast-envsubst@v1
+- uses: Dgeliko/envsubst@v2
   env:
     FOO_VALUE: cat good
     BAR_VALUE: dog food
@@ -45,3 +45,17 @@ example:
 
 - Fast, runs in the GitHub Actions node.js runtime; no Docker pull needed.
 - Provide an env file and have it loaded into your substitution environment
+
+## Development
+
+Version 1.0.2 uses the GitHub Actions Node.js 24 runtime. Self-hosted runners
+must support `node24`. Use Node.js 24 locally (`nvm use`), then run:
+
+```sh
+npm ci
+npm run lint
+npm test -- --runInBand
+npm run build
+```
+
+Commit the generated `dist` directory together with source changes.

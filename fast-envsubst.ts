@@ -14,7 +14,8 @@ const run = async (): Promise<void> => {
     core.debug(`env file: ${envFile}`)
 
     if (envFile) {
-      dotenv.config({path: path.resolve(process.cwd(), envFile)})
+      const result = dotenv.config({path: path.resolve(process.cwd(), envFile), quiet: true})
+      if (result.error) throw result.error
     }
 
     await envsub({
@@ -25,7 +26,7 @@ const run = async (): Promise<void> => {
     core.setOutput('out-file-created', 'true')
   } catch (error) {
     core.setOutput('out-file-created', 'false')
-    core.setFailed(error.message)
+    core.setFailed(error instanceof Error ? error.message : String(error))
   }
 }
 

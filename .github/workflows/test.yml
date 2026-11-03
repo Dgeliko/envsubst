@@ -1,15 +1,20 @@
-name: 'test-action'
-on:
-  push:
-    branches:
-      - master
+name: test-action
+on: [push, pull_request]
 
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test -- --runInBand
+      - run: npm run build
+      - run: git diff --exit-code -- dist
       - uses: ./
         env:
           FOO_VALUE: cat good
@@ -18,5 +23,4 @@ jobs:
           env-file: __tests__/fixtures/example.env
           in-file: __tests__/fixtures/example.yaml.in
           out-file: __tests__/runner/example.yaml
-
-      - run: cat __tests__/runner/example.yaml
+      - run: diff __tests__/fixtures/example.yaml __tests__/runner/example.yaml
